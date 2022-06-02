@@ -20,33 +20,42 @@ app.get("/", async (req, res) => {
 })
 app.post("/", async (req, res) => {
 
-  let output = "";
-  const { language = "java", code, input = "" } = req.body;
+  try {
 
-  if (code === undefined) output = "No code specified to execute.";
-  if (!supportedLanguages.includes(language))
-    output = `Language ${language} is not supported. Please refer to docs to know the supported languages.`;
+    let output = "";
+    const { language = "java", code, input = "" } = req.body;
+    console.log(language);
 
-  if (code !== undefined && supportedLanguages.includes(language)) {
-    const codeFile = createCodeFile(language, code);
+    if (code === undefined) output = "No code specified to execute.";
+    if (!supportedLanguages.includes(language))
+      output = `Language ${language} is not supported. Please refer to docs to know the supported languages.`;
 
-    switch (language) {
-      case "java":
-        output = await executeJava(codeFile, input);
-        break;
-      case "py":
-        output = await executePython(codeFile, input);
-        break;
-      case "cpp":
-        output = await executeCorCPP(codeFile, input);
-        break;
-      case "c":
-        output = await executeCorCPP(codeFile, input);
-        break;
+    if (code !== undefined && supportedLanguages.includes(language)) {
+      const codeFile = createCodeFile(language, code);
+
+      switch (language) {
+        case "java":
+          output = await executeJava(codeFile, input);
+          break;
+        case "py":
+          output = await executePython(codeFile, input);
+          break;
+        case "cpp":
+          output = await executeCorCPP(codeFile, input);
+          break;
+        case "c":
+          output = await executeCorCPP(codeFile, input);
+          break;
+      }
     }
+
+    res.send(output);
+
+  }
+  catch (err) {
+    console.log(err);
   }
 
-  res.send(output);
 });
 
 app.get("/list", (req, res) => {
